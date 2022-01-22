@@ -25,7 +25,7 @@ export const randomLetters = (count: number): string[] => {
 
   const wordCount = possibleWords(letters).length;
 
-  return wordCount >= 5 && wordCount <= 50 ? letters : randomLetters(count);
+  return wordCount >= 5 && wordCount <= 25 ? letters : randomLetters(count);
 };
 
 const takeRand = (count: number, pop: string): string[] =>
