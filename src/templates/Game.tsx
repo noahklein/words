@@ -139,6 +139,8 @@ const Game: React.FC = () => {
           onChange={onInputChange}
           value={guess}
           autoFocus
+          autoComplete="off"
+          spellCheck="false"
           onBlur={({ target }) => target.focus()}
         />
         <Button onClick={() => submitGuess(guess)}>Submit</Button>
