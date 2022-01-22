@@ -9,11 +9,9 @@ export const contains = (word: string): Boolean => DICTIONARY.has(word);
 export const possibleWords = (letters: string[]): string[] =>
   Array.from(DICTIONARY).filter((word) => isAllowed(letters, word));
 
-export const isAllowed = (letters: string[], word: string) => {
-  const onlyValidLetters = word.split('').every((c) => letters.includes(c));
-  const noDuplicates = new Set(word).size === word.length;
-
-  return onlyValidLetters && noDuplicates;
+export const isAllowed = (letters: string[], word: string): boolean => {
+  const onlyValidLetters = Array.from(word).every((c) => letters.includes(c));
+  return onlyValidLetters;
 };
 
 const consonants = 'BCDFGHJKLMNPQRSTVWXYZ';

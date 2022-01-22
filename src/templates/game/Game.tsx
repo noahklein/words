@@ -67,9 +67,10 @@ const Game: React.FC = () => {
   const [guess, setGuess] = useState<string>('');
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const word = e.target.value.toUpperCase();
-    if (!dictionary.isAllowed(letters, word)) {
-      return;
-    }
+    if (!dictionary.isAllowed(letters, word)) return;
+
+    // Prevent duplicate letters.
+    if (new Set(word).size !== word.length) return;
 
     setGuess(word);
   };
@@ -101,7 +102,6 @@ const Game: React.FC = () => {
   }, [_enterPressed]);
 
   useEffect(() => {
-    console.count('enterPressed=' + enterPressed);
     if (enterPressed) {
       submitGuess(guess);
       setEnterPressed(false);
