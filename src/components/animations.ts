@@ -19,11 +19,11 @@ export const shake = keyframes`
 `;
 
 export const bounce = keyframes`
-  0%   { transform: scale(1,1)      translateY(0); }
-  10%  { transform: scale(1.1,.9)   translateY(0); }
-  30%  { transform: scale(.9,1.1)   translateY(-30px); }
-  50%  { transform: scale(1.05,.95) translateY(0); }
-  57%  { transform: scale(1,1)      translateY(-10px); }
-  64%  { transform: scale(1,1)      translateY(0); }
-  100% { transform: scale(1,1)      translateY(0); }
+  0%   { transform: translateY(0); }
+  10%  { transform: translateY(0); }
+  30%  { transform: translateY(-18px); }
+  50%  { transform: translateY(5px); }
+  57%  { transform: translateY(-10px); }
+  64%  { transform: translateY(2px); }
+  100% { transform: translateY(0); }
 `;

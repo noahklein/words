@@ -1,19 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useKeyPress = (targetKey: string) => {
   const [keyPressed, setKeyPressed] = useState<boolean>(false);
 
-  const downHandler = ({ key }: KeyboardEvent) => {
-    if (key === targetKey) {
-      setKeyPressed(true);
-    }
-  };
+  const downHandler = useCallback(
+    ({ key }: KeyboardEvent) => {
+      if (key === targetKey) {
+        setKeyPressed(true);
+      }
+    },
+    [targetKey],
+  );
 
-  const upHandler = ({ key }: KeyboardEvent) => {
-    if (key === targetKey) {
-      setKeyPressed(false);
-    }
-  };
+  const upHandler = useCallback(
+    ({ key }: KeyboardEvent) => {
+      if (key === targetKey) {
+        setKeyPressed(false);
+      }
+    },
+    [targetKey],
+  );
 
   useEffect(() => {
     window.addEventListener('keydown', downHandler);
@@ -23,7 +29,7 @@ export const useKeyPress = (targetKey: string) => {
       window.removeEventListener('keydown', downHandler);
       window.removeEventListener('keyup', upHandler);
     };
-  }, []);
+  }, [downHandler, upHandler]);
 
   return keyPressed;
 };

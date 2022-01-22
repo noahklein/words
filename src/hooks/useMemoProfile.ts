@@ -10,5 +10,6 @@ export function useMemoProfile<T>(
     const out = fn();
     console.timeEnd(label);
     return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import * as animations from '../components/animations';
 import { Button } from '../components/Button';
@@ -35,7 +35,6 @@ const InputWrapper = styled.div<{ $error: boolean }>`
     $error &&
     css`
       animation: ${animations.shake} 0.25s ease-in-out 0s;
-      animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
     `}
 `;
 
@@ -67,19 +66,18 @@ const Word = styled.span<{ $hidden: boolean }>`
           content: none;
         `
       : css`
-          animation: ${animations.bounce} 0.5s ease-in-out 0s;
+          animation: ${animations.bounce} 0.75s
+            cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          animation-delay: 0.1s;
+          animation-fill-mode: forwards;
         `}
-`;
-
-const EmptyWord = styled(Word)`
-  background-color: var(--text-color);
 `;
 
 const Words = styled.section`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
+  gap: 2rem 1rem;
 `;
 
 const Score = styled.div``;
@@ -104,25 +102,38 @@ const Game: React.FC = () => {
   };
 
   const [found, setFound] = useState<string[]>([]);
-  const enterPressed = useKeyPress('Enter');
 
-  const submitGuess = (word: string) => {
-    if (
-      !dictionary.isAllowed(letters, word) ||
-      !dictionary.contains(word) ||
-      found.includes(word)
-    ) {
-      setError(true);
-      return;
-    }
+  const submitGuess = useCallback(
+    (word: string) => {
+      if (
+        !dictionary.isAllowed(letters, word) ||
+        !dictionary.contains(word) ||
+        found.includes(word)
+      ) {
+        console.log('error ', word.length, word);
+        setError(true);
+        return;
+      }
 
-    setFound((found) => [...found, word]);
-    setGuess('');
-  };
+      setFound((found) => [...found, word]);
+      setGuess('');
+    },
+    [found, letters],
+  );
+
+  const _enterPressed = useKeyPress('Enter');
+  const [enterPressed, setEnterPressed] = useState(_enterPressed);
+  useEffect(() => {
+    if (_enterPressed) setEnterPressed(_enterPressed);
+  }, [_enterPressed]);
 
   useEffect(() => {
-    if (enterPressed) submitGuess(guess);
-  }, [enterPressed]);
+    console.count('enterPressed=' + enterPressed);
+    if (enterPressed) {
+      submitGuess(guess);
+      setEnterPressed(false);
+    }
+  }, [enterPressed, guess, submitGuess]);
 
   const [error, setError] = useState(false);
 

@@ -31,10 +31,10 @@ export const randomLetters = (count: number): string[] => {
 };
 
 const takeRand = (count: number, pop: string): string[] =>
-  shuffle(Array.from(pop)).slice(0, count);
+  shuffle(pop).slice(0, count);
 
 // Durstenfeld shuffle algorithm.
-function shuffle<T>(arr: Iterable<T>): T[] {
+export function shuffle<T>(arr: Iterable<T>): T[] {
   const out = Array.from(arr);
 
   for (let i = out.length - 1; i > 0; i--) {
