@@ -1,6 +1,8 @@
 import allWords from './dictionary.json';
 
-const DICTIONARY = new Set(allWords.filter((word) => word.length >= 4));
+const DICTIONARY = new Set(
+  allWords.filter((word) => word.length >= 4 && word.length <= 6),
+);
 
 export const contains = (word: string): Boolean => DICTIONARY.has(word);
 
@@ -25,7 +27,7 @@ export const randomLetters = (count: number): string[] => {
 
   const wordCount = possibleWords(letters).length;
 
-  return wordCount > 8 && wordCount < 50 ? letters : randomLetters(count);
+  return wordCount >= 5 && wordCount <= 50 ? letters : randomLetters(count);
 };
 
 const takeRand = (count: number, pop: string): string[] =>
