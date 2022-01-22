@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useMemo, useState } from 'react';
+import styled, { css, keyframes } from 'styled-components';
+import { Button } from '../components/Button';
+import * as dictionary from '../dictionary';
+import { useKeyPress } from '../hooks/useKeyPress';
 
 const Page = styled.div`
   display: flex;
@@ -7,8 +10,14 @@ const Page = styled.div`
   align-items: center;
   gap: 2rem;
 
-  width: 100vw;
-  height: 100vh;
+  width: auto;
+  height: auto;
+  margin: 0 2rem;
+`;
+
+const Letter = styled(Button)`
+  font-size: larger;
+  width: 3rem;
 `;
 
 const Letters = styled.div`
@@ -16,34 +25,108 @@ const Letters = styled.div`
   gap: 1rem;
 `;
 
-const Letter = styled.div`
-  background-color: aliceblue;
-  padding: 1rem;
+const InputWrapper = styled.div<{ $error: boolean }>`
+  display: flex;
+  justify-content: space-between;
 
-  &:hover {
-    background-color: aqua;
+  ${({ $error }) =>
+    $error &&
+    css`
+      animation: ${shake} 0.25s ease-in-out 0s;
+    `}
+`;
+
+const shake = keyframes`
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
   }
 `;
 
 const Input = styled.input`
-  padding: 1rem;
+  padding: 1rem 2.5rem;
   font-size: larger;
+  border: none;
+  outline: none;
 `;
 
+const Word = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid var(--text-color);
+  padding: 1rem;
+  width: 8rem;
+  height: 3rem;
+  text-transform: uppercase;
+  cursor: default;
+`;
+
+const EmptyWord = styled(Word)`
+  background-color: var(--text-color);
+`;
+
+const Words = styled.section`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+`;
+
+const Score = styled.div``;
+
 const Game: React.FC = () => {
-  const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+  const letters = useMemo(() => dictionary.randomLetters(6), []);
+
+  const pwords = useMemo(
+    () => dictionary.possibleWords(letters).sort((a, b) => a.length - b.length),
+    [],
+  );
 
   const [guess, setGuess] = useState<string>('');
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.toUpperCase();
-
-    const isAllowed = val.split('').every((c) => letters.includes(c));
-    if (!isAllowed) {
+    const word = e.target.value.toUpperCase();
+    if (!dictionary.isAllowed(letters, word)) {
       return;
     }
 
-    setGuess(val);
+    setGuess(word);
   };
+
+  const [found, setFound] = useState<string[]>([]);
+  const enterPressed = useKeyPress('Enter');
+
+  const submitGuess = (word: string) => {
+    if (
+      !dictionary.isAllowed(letters, word) ||
+      !dictionary.contains(word) ||
+      found.includes(word)
+    ) {
+      setError(true);
+      return;
+    }
+
+    setFound((found) => [...found, word]);
+    setGuess('');
+  };
+
+  useEffect(() => {
+    if (enterPressed) submitGuess(guess);
+  }, [enterPressed]);
+
+  const [error, setError] = useState(false);
 
   return (
     <Page>
@@ -52,12 +135,34 @@ const Game: React.FC = () => {
       </header>
       <Letters>
         {letters.map((letter) => (
-          <Letter key={letter}>{letter}</Letter>
+          <Letter
+            key={letter}
+            disabled={guess.includes(letter)}
+            onClick={() => setGuess((g) => g + letter)}
+          >
+            {letter}
+          </Letter>
         ))}
       </Letters>
-      <div>
-        <Input type="text" onChange={onInputChange} value={guess} />
-      </div>
+      <InputWrapper $error={error} onAnimationEnd={() => setError(false)}>
+        <Input
+          type="text"
+          onChange={onInputChange}
+          value={guess}
+          autoFocus
+          onBlur={({ target }) => target.focus()}
+        />
+        <Button onClick={() => submitGuess(guess)}>Submit</Button>
+      </InputWrapper>
+
+      <Score>
+        Found {found.length} of {pwords.length}
+      </Score>
+      <Words>
+        {pwords.map((word) =>
+          found.includes(word) ? <Word key={word}>{word}</Word> : <EmptyWord />,
+        )}
+      </Words>
     </Page>
   );
 };
