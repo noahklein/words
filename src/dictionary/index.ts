@@ -18,10 +18,10 @@ const consonants = 'BCDFGHJKLMNPQRSTVWXYZ';
 const vowels = 'AEIOU';
 
 export const randomLetters = (count: number): string[] => {
-  const letters = [
+  const letters = shuffle([
     ...takeRand(2, vowels),
     ...takeRand(count - 2, consonants),
-  ].sort();
+  ]);
 
   const wordCount = possibleWords(letters).length;
 
@@ -29,6 +29,16 @@ export const randomLetters = (count: number): string[] => {
 };
 
 const takeRand = (count: number, pop: string): string[] =>
-  Array.from(pop)
-    .sort(() => 0.5 - Math.random())
-    .slice(0, count);
+  shuffle(Array.from(pop)).slice(0, count);
+
+// Durstenfeld shuffle algorithm.
+function shuffle<T>(arr: Iterable<T>): T[] {
+  const out = Array.from(arr);
+
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+
+  return out;
+}

@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import * as animations from '../components/animations';
 import { Button } from '../components/Button';
 import * as dictionary from '../dictionary';
 import { useKeyPress } from '../hooks/useKeyPress';
+import { useMemoProfile } from '../hooks/useMemoProfile';
 
 const Page = styled.div`
   display: flex;
@@ -71,9 +72,14 @@ const Words = styled.section`
 const Score = styled.div``;
 
 const Game: React.FC = () => {
-  const letters = useMemo(() => dictionary.randomLetters(6), []);
+  const letters = useMemoProfile(
+    'randomLetters(6)',
+    () => dictionary.randomLetters(6),
+    [],
+  );
 
-  const pwords = useMemo(
+  const pwords = useMemoProfile(
+    `possibleWords(${letters})`,
     () => dictionary.possibleWords(letters).sort((a, b) => a.length - b.length),
     [],
   );
