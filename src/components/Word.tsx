@@ -31,12 +31,10 @@ const _Word = styled.span<{ hidden: boolean }>`
         `}
 `;
 
-interface Props extends StyledComponentPropsWithRef<typeof _Word> {
-  hidden: boolean;
-}
+type Props = StyledComponentPropsWithRef<typeof _Word>;
 
 export const Word: React.FC<Props> = ({ hidden, children, ...props }) => (
-  <_Word hidden={hidden} {...props}>
+  <_Word hidden={hidden ?? false} {...props}>
     {hidden ? '' : children}
   </_Word>
 );
