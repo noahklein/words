@@ -150,9 +150,15 @@ const Game: React.FC = () => {
         Found {found.length} of {pwords.length}
       </Score>
       <Words>
-        {pwords.map((word) =>
-          found.includes(word) ? <Word key={word}>{word}</Word> : <EmptyWord />,
-        )}
+        {pwords
+          .sort()
+          .map((word) =>
+            found.includes(word) ? (
+              <Word key={word}>{word}</Word>
+            ) : (
+              <EmptyWord />
+            ),
+          )}
       </Words>
     </Page>
   );
