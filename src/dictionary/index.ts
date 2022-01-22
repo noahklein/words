@@ -1,7 +1,5 @@
 import allWords from './dictionary.json';
 
-const MIN_LENGTH = 4;
-
 const DICTIONARY = new Set(allWords.filter((word) => word.length >= 4));
 
 export const contains = (word: string): Boolean => DICTIONARY.has(word);
@@ -16,13 +14,21 @@ export const isAllowed = (letters: string[], word: string) => {
   return onlyValidLetters && noDuplicates;
 };
 
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const consonants = 'BCDFGHJKLMNPQRSTVWXYZ';
+const vowels = 'AEIOU';
+
 export const randomLetters = (count: number): string[] => {
-  const letters = Array.from(alphabet)
-    .sort((a, b) => 0.5 - Math.random())
-    .slice(0, count);
+  const letters = [
+    ...takeRand(2, vowels),
+    ...takeRand(count - 2, consonants),
+  ].sort();
 
   const wordCount = possibleWords(letters).length;
 
-  return wordCount > 5 && wordCount < 100 ? letters : randomLetters(count);
+  return wordCount > 8 && wordCount < 50 ? letters : randomLetters(count);
 };
+
+const takeRand = (count: number, pop: string): string[] =>
+  Array.from(pop)
+    .sort(() => 0.5 - Math.random())
+    .slice(0, count);

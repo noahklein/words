@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
+import * as animations from '../components/animations';
 import { Button } from '../components/Button';
 import * as dictionary from '../dictionary';
 import { useKeyPress } from '../hooks/useKeyPress';
@@ -32,26 +33,8 @@ const InputWrapper = styled.div<{ $error: boolean }>`
   ${({ $error }) =>
     $error &&
     css`
-      animation: ${shake} 0.25s ease-in-out 0s;
+      animation: ${animations.shake} 0.25s ease-in-out 0s;
     `}
-`;
-
-const shake = keyframes`
-  10%, 90% {
-    transform: translate3d(-1px, 0, 0);
-  }
-  
-  20%, 80% {
-    transform: translate3d(2px, 0, 0);
-  }
-
-  30%, 50%, 70% {
-    transform: translate3d(-4px, 0, 0);
-  }
-
-  40%, 60% {
-    transform: translate3d(4px, 0, 0);
-  }
 `;
 
 const Input = styled.input`
