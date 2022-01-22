@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import * as animations from '../components/animations';
-import { Button } from '../components/Button';
-import * as dictionary from '../dictionary';
-import { useKeyPress } from '../hooks/useKeyPress';
-import { useMemoProfile } from '../hooks/useMemoProfile';
+import * as animations from '../../components/animations';
+import { Button } from '../../components/Button';
+import { Word } from '../../components/Word';
+import * as dictionary from '../../dictionary';
+import { useKeyPress } from '../../hooks/useKeyPress';
+import { useMemoProfile } from '../../hooks/useMemoProfile';
 
 const Page = styled.div`
   display: flex;
@@ -43,34 +44,6 @@ const Input = styled.input`
   font-size: larger;
   border: none;
   outline: none;
-`;
-
-const Word = styled.span<{ $hidden: boolean }>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  border: 1px solid var(--text-color);
-  padding: 1rem;
-  width: 8rem;
-  height: 3rem;
-  text-transform: uppercase;
-  cursor: default;
-
-  transition: all 0.5s;
-
-  ${({ $hidden }) =>
-    $hidden
-      ? css`
-          background-color: var(--text-color);
-          content: none;
-        `
-      : css`
-          animation: ${animations.bounce} 0.75s
-            cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          animation-delay: 0.1s;
-          animation-fill-mode: forwards;
-        `}
 `;
 
 const Words = styled.section`
@@ -171,7 +144,7 @@ const Game: React.FC = () => {
       </Score>
       <Words>
         {pwords.sort().map((word) => (
-          <Word key={word} $hidden={!found.includes(word)}>
+          <Word key={word} hidden={!found.includes(word)}>
             {word}
           </Word>
         ))}
