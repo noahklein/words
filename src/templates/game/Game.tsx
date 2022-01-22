@@ -13,9 +13,9 @@ const Page = styled.div`
   align-items: center;
   gap: 2rem;
 
-  width: auto;
+  width: 100%;
   height: auto;
-  margin: 0 2rem;
+  padding: 0 2rem;
 `;
 
 const Letter = styled(Button)`
@@ -134,7 +134,6 @@ const Game: React.FC = () => {
           autoFocus
           autoComplete="off"
           spellCheck="false"
-          onBlur={({ target }) => target.focus()}
         />
         <Button onClick={() => submitGuess(guess)}>Submit</Button>
       </InputWrapper>
