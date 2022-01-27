@@ -4,7 +4,7 @@ import * as animations from '../../components/animations';
 import { Button } from '../../components/Button';
 import { Word } from '../../components/Word';
 import * as dictionary from '../../dictionary';
-import { useKeyPress } from '../../hooks/useKeyPress';
+import { useKeyPress, useOnKeyPress } from '../../hooks/useKeyPress';
 import { useMemoProfile } from '../../hooks/useMemoProfile';
 
 const Page = styled.div`
@@ -77,36 +77,22 @@ const Game: React.FC = () => {
 
   const [found, setFound] = useState<string[]>([]);
 
-  const submitGuess = useCallback(
-    (word: string) => {
-      if (
-        !dictionary.isAllowed(letters, word) ||
-        !dictionary.contains(word) ||
-        found.includes(word)
-      ) {
-        console.log('error ', word.length, word);
-        setError(true);
-        return;
-      }
-
-      setFound((found) => [...found, word]);
-      setGuess('');
-    },
-    [found, letters],
-  );
-
-  const _enterPressed = useKeyPress('Enter');
-  const [enterPressed, setEnterPressed] = useState(_enterPressed);
-  useEffect(() => {
-    if (_enterPressed) setEnterPressed(_enterPressed);
-  }, [_enterPressed]);
-
-  useEffect(() => {
-    if (enterPressed) {
-      submitGuess(guess);
-      setEnterPressed(false);
+  const submitGuess = useCallback(() => {
+    if (
+      !dictionary.isAllowed(letters, guess) ||
+      !dictionary.contains(guess) ||
+      found.includes(guess)
+    ) {
+      console.log('error ', guess.length, guess);
+      setError(true);
+      return;
     }
-  }, [enterPressed, guess, submitGuess]);
+
+    setFound((found) => [...found, guess]);
+    setGuess('');
+  }, [found, guess, letters]);
+
+  useOnKeyPress('Enter', submitGuess);
 
   const [error, setError] = useState(false);
 
@@ -135,7 +121,7 @@ const Game: React.FC = () => {
           autoComplete="off"
           spellCheck="false"
         />
-        <Button onClick={() => submitGuess(guess)}>Submit</Button>
+        <Button onClick={submitGuess}>Submit</Button>
       </InputWrapper>
 
       <Score>
@@ -164,12 +150,12 @@ const useLetters = (count: number) => {
   const [letters, setLetters] = useState(initialLetters);
 
   const shuffleLetters = () =>
-    setLetters((letters) => letters.sort((a, b) => 0.5 - Math.random()));
+    setLetters((letters) => letters.sort(() => 0.5 - Math.random()));
 
-  const tabPressed = useKeyPress('Tab');
+  const pressed = useKeyPress('Shift');
   useEffect(() => {
-    if (tabPressed) shuffleLetters();
-  }, [tabPressed]);
+    if (pressed) shuffleLetters();
+  }, [pressed]);
 
   return {
     letters,

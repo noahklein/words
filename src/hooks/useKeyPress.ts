@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
 export const useKeyPress = (targetKey: string) => {
-  const [keyPressed, setKeyPressed] = useState<boolean>(false);
+  const [pressed, setPressed] = useState<boolean>(false);
 
   const downHandler = useCallback(
     ({ key }: KeyboardEvent) => {
       if (key === targetKey) {
-        setKeyPressed(true);
+        setPressed(true);
       }
     },
     [targetKey],
@@ -15,7 +15,7 @@ export const useKeyPress = (targetKey: string) => {
   const upHandler = useCallback(
     ({ key }: KeyboardEvent) => {
       if (key === targetKey) {
-        setKeyPressed(false);
+        setPressed(false);
       }
     },
     [targetKey],
@@ -31,5 +31,21 @@ export const useKeyPress = (targetKey: string) => {
     };
   }, [downHandler, upHandler]);
 
-  return keyPressed;
+  return pressed;
+};
+
+export const useOnKeyPress = (targetKey: string, fn: () => void) => {
+  const _pressed = useKeyPress(targetKey);
+  const [pressed, setPressed] = useState(_pressed);
+
+  useEffect(() => {
+    if (_pressed) setPressed(true);
+  }, [_pressed]);
+
+  useEffect(() => {
+    if (pressed) {
+      fn();
+      setPressed(false);
+    }
+  }, [fn, pressed]);
 };
